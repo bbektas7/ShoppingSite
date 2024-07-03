@@ -1,0 +1,18 @@
+﻿@using Shopping.Entity.Models
+@model List<Category>
+<h2>Category List</h2>
+<table class="table table-bordered">
+    <tr>
+        <th>ID</th>
+        <th>Category Name</th>
+        <th>Products</th>
+    </tr>
+    <tr>
+        @foreach (var x in Model)
+        {
+            <td>@x.Id</td>
+            <td>@x.Name</td>
+            <td>@x.Products</td>
+            }
+        </tr>
+    </table>

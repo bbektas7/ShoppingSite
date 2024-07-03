@@ -1,0 +1,41 @@
+﻿@model List<Shopping.Entity.Models.User>
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+<style>
+    .custom-table {
+        margin: 50px; /* Tablonun etrafına 20 piksel boşluk bırakır */
+    }
+</style>
+
+<h2>User List</h2>
+<br />
+<table class="table table-bordered">
+    <tr>
+        <th>ID</th>
+        <th>FULL NAME</th>
+        <th>USERNAME</th>
+        <th>IS ADMIN?</th>
+        <th>DELETE</th>
+        <th>UPDATE</th>
+
+    </tr>
+    @if (Model != null)
+    {
+        foreach (var x in Model)
+        {
+            <tr>
+                <td>@x.Id</td>
+                <td>@x.FullName</td>
+                <td>@x.Username</td>
+                <td>@(x.IsAdmin ? "Yes" : "No")</td>
+                <td><a href="/User/Delete/@x.Id" class="btn btn-danger">Delete</a></td>
+                <td><a href="/User/add/?Id=@x.Id" class="btn btn-warning">Update</a></td>
+            </tr>
+        }
+    }
+</table>
+
+

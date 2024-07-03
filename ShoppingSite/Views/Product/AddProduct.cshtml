@@ -1,0 +1,78 @@
+﻿@model Shopping.Entity.Models.Product
+@{
+    ViewBag.Title = "AddProduct";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+@*@Html.Action("CategoryList", "Product")
+    <a href="/Product/AddCategory" class="btn btn-primary">Add Category</a>
+    <br />
+    <br />
+    <br />
+    <h2>Add Product</h2>
+    <br />
+    <form method="post" action="/Product/AddProduct">
+        <div class="mb-3">
+            <label class="form-label">Product Name</label>
+            <input type="text" class="form-control" name="Name" value="">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Barcode</label>
+            <input type="text" class="form-control" name="Barcode" value="">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Stock Count</label>
+            <input type="number" class="form-control" name="Stock" value="">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Price</label>
+            <input type="text" class="form-control" name="Price" value="">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Category ID</label>
+            <input type="number" class="form-control" name="CategoryId" value="">
+        </div>
+        <button type="submit" class="btn btn-primary">Add Product</button>
+    </form>
+    <br />*@
+<h2>Add Product</h2>
+<br />
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card mb-4 mt-4">
+            <div class="card-header">
+                <i class="fa-solid fa-plus"></i> Add Product
+            </div>
+            <div class="card-body">
+                @using (Html.BeginForm("AddProduct", "Product", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="mb-3">
+                        @Html.LabelFor(x => x.Name, "Product Name")
+                        @Html.TextBoxFor(x => x.Name, new { @class = "form-control mb-3" })
+                    </div>
+                    <div class="mb-3">
+                        @Html.LabelFor(x => x.Barcode, "Product Barcode")
+                        @Html.TextBoxFor(x => x.Barcode, new { @class = "form-control mb-3" })
+                    </div>
+                    <div class="mb-3">
+                        @Html.LabelFor(x => x.Stock, "Stock Count")
+                        @Html.TextBoxFor(x => x.Stock, new { @class = "form-control mb-3" })
+                    </div>
+                    <div class="mb-3">
+                        @Html.LabelFor(x => x.Price, "Price")
+                        @Html.TextBoxFor(x => x.Price, new { @class = "form-control mb-3" })
+                    </div>
+                    <div class="mb-3">
+                        @Html.LabelFor(x => x.CategoryId, "Category")
+                        @Html.DropDownListFor(x => x.CategoryId, new SelectList(ViewBag.Categories, "Id", "Name"), new { @class = "form-control mb-3" })
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                }
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

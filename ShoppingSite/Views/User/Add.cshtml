@@ -1,0 +1,64 @@
+﻿@model Shopping.Entity.Models.User
+@{
+    ViewBag.Title = "Add";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+
+    var title = "Add User";
+    var buttonText = "Kaydet";
+    var button = "btn-primary";
+
+    if (Model != null)
+    {
+        title = "Update User";
+        buttonText = "Update";
+        button = "btn-primary";
+    }
+
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card mb-4 mt-4">
+            <div class="card-header">
+                <i class="fa-solid fa-user-plus"></i> @title
+            </div>
+            <div class="card-body">
+                <form method="post" action="/User/Add">
+                    @if (Model != null)
+                    {
+                        <input type="hidden" class="form-control" name="Id" value="@Model.Id">
+                    }
+                    <div class="mb-3">
+                        <label class="form-label">User Name-Surname</label>
+                        <input type="text" class="form-control form-control-sm" name="FullName" value="@(Model != null ? Model.FullName : "")">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" class="form-control form-control-sm" name="Username" value="@(Model != null ? Model.Username : "")">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Password</label>
+                        <input type="text" class="form-control form-control-sm" id="UserInputId" name="UserPassword">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Is Admin?</label>
+                        <select class="form-control selectpicker" name="IsAdmin"
+                                data-title="Select Admin"
+                                data-live-search="true">
+                            <option @(Model != null && Model.IsAdmin ? "selected" : "") value="True">Yes</option>
+                            <option @(Model != null && !Model.IsAdmin ? "selected" : "") value="False">No</option>
+                        </select>
+                    </div>
+
+                    <button class="btn @button" type="submit">
+                        @buttonText
+                    </button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

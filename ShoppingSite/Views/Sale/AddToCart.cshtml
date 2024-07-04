@@ -1,0 +1,45 @@
+﻿
+@{
+    ViewBag.Title = "AddToCart";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+
+    var products = ViewBag.Products as List<Shopping.Entity.Models.Product>;
+    var users = ViewBag.Users as List<Shopping.Entity.Models.User>;
+    var datetime = DateTime.Now;
+}
+
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card mb-4 mt-4">
+            <div class="card-header">
+                <i class="fa-solid fa-plus"></i> Sale
+            </div>
+            <div class="card-body">
+                <form method="post" action="/Sale/AddToCart">
+                    <select class="form-control">
+                        @foreach (var item in products)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    </select>
+                    <br />
+                    <select class="form-control" name="UserId">
+                        @foreach (var item in users)
+                        {
+                            <option value="@item.Id">@item.FullName</option>
+                        }
+                    </select>
+                    <br />
+                    <div class="mb-3">
+                        <label class="form-label">Tarih</label>
+                        <input type="text" class="form-control" name="TotalAmount" value="">
+                    </div>
+                        <br />
+                        <button type="submit" class="btn btn-primary">Add</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+

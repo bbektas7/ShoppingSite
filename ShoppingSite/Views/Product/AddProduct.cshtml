@@ -2,6 +2,15 @@
 @{
     ViewBag.Title = "AddProduct";
     Layout = "~/Views/Shared/_LayoutPage.cshtml";
+
+    var title = "Add Product";
+    var buttonText = "Kaydet";
+
+    if (Model != null)
+    {
+        title = "Update Product";
+        buttonText = "Update";
+    }
 }
 @*@Html.Action("CategoryList", "Product")
     <a href="/Product/AddCategory" class="btn btn-primary">Add Category</a>
@@ -40,7 +49,7 @@
     <div class="col-lg-6">
         <div class="card mb-4 mt-4">
             <div class="card-header">
-                <i class="fa-solid fa-plus"></i> Add Product
+                <i class="fa-solid fa-plus"></i> @title
             </div>
             <div class="card-body">
                 @using (Html.BeginForm("AddProduct", "Product", FormMethod.Post))
@@ -66,9 +75,8 @@
                         @Html.LabelFor(x => x.CategoryId, "Category")
                         @Html.DropDownListFor(x => x.CategoryId, new SelectList(ViewBag.Categories, "Id", "Name"), new { @class = "form-control mb-3" })
                     </div>
-                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="submit" class="btn btn-primary">@buttonText</button>
                 }
-                
             </div>
         </div>
     </div>

@@ -1,18 +1,26 @@
-﻿@using Shopping.Entity.Models
-@model List<Category>
-<h2>Category List</h2>
+﻿@model List<Shopping.Entity.Models.Category>
+@{
+    ViewBag.Title = "CategoryList";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+}
+
+<h2>CategoryList</h2>
 <table class="table table-bordered">
     <tr>
         <th>ID</th>
         <th>Category Name</th>
-        <th>Products</th>
+        <th>Delete</th>
+        <th>Update</th>
     </tr>
-    <tr>
-        @foreach (var x in Model)
-        {
+
+    @foreach (var x in Model)
+     {
+        <tr>
             <td>@x.Id</td>
             <td>@x.Name</td>
-            <td>@x.Products</td>
-            }
+            <td><a href="/Product/DeleteCategory/@x.Id" class="btn btn-danger">Delete</a></td>
+            <td><a href="/Product/AddCategory/?Id=@x.Id" class="btn btn-warning">Update</a></td>
         </tr>
+     }
     </table>
+

@@ -2,6 +2,16 @@
 @{
     ViewBag.Title = "AddCategory";
     Layout = "~/Views/Shared/_LayoutPage.cshtml";
+
+    var title = "Add Product";
+    var buttonText = "Kaydet";
+
+    if (Model != null)
+    {
+        title = "Update Product";
+        buttonText = "Update";
+    }
+}
 }
 
 <h2>Add Category</h2>
@@ -10,16 +20,16 @@
     <div class="col-lg-6">
         <div class="card mb-4 mt-4">
             <div class="card-header">
-                <i class="fa-solid fa-plus"></i> Add Category
+                <i class="fa-solid fa-plus"></i> @title
             </div>
             <div class="card-body">
-                    @using (Html.BeginForm("AddCategory", "Product", FormMethod.Post))
-                    {
+                @using (Html.BeginForm("AddCategory", "Product", FormMethod.Post))
+                {
                     @Html.LabelFor(x => x.Name, "Category Name")
                     @Html.TextBoxFor(x => x.Name, new { @class = "form-control mb-3" })
 
-                    <button type="submit" class="btn btn-primary">Save</button>
-                    }
+                    <button type="submit" class="btn btn-primary">@buttonText</button>
+                }
             </div>
         </div>
     </div>

@@ -7,21 +7,27 @@
 <h2>ProductList</h2>
 <table class="table table-bordered">
     <tr>
+        <th>ID</th>
         <th>Name</th>
         <th>Barcode</th>
         <th>Stock</th>
         <th>Price</th>
         <th>Category</th>
+        <th>Delete</th>
+        <th>Update</th>
     </tr>
 
     @foreach (var x in Model)
     {
         <tr>
+            <td>@x.Id</td>
             <td>@x.Name</td>
             <td>@x.Barcode</td>
             <td>@x.Stock</td>
             <td>@x.Price</td>
             <td>@x.Category.Name</td>
+            <td><a href="/Product/DeleteProduct/@x.Id" class="btn btn-danger">Delete</a></td>
+            <td><a href="/Product/AddProduct/?Id=@x.Id" class="btn btn-warning">Update</a></td>
         </tr>
             }
         

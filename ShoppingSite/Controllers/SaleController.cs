@@ -40,7 +40,7 @@ namespace ShoppingSite.Controllers
         [HttpPost]
         public ActionResult AddToCart(Sale s)
         { 
-            s.Date = DateTime.Now;
+            
             db.Sales.Add(s);
             db.SaveChanges();
             return RedirectToAction("AddToCart");
@@ -48,16 +48,17 @@ namespace ShoppingSite.Controllers
            
         [HttpGet]
         public ActionResult GetProductPrice(int productId)
+        
         {
-            var product = db.Products.FirstOrDefault(p => p.Id == productId);
+            var product = db.Products.Find(productId);
 
             if (product != null)
             {
-                return Json(product.Price, JsonRequestBehavior.AllowGet);
+                return Json( new { unitprice = product.Price }, JsonRequestBehavior.AllowGet);
             }
             else
             {
-                return Json("Ürün bulunamadı", JsonRequestBehavior.AllowGet);
+                return Json(new {unitprice = 0}, JsonRequestBehavior.AllowGet);
             }
         }
     }

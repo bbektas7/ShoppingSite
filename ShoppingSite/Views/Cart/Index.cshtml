@@ -1,0 +1,190 @@
+﻿@model ShoppingSite.Models.ViewModels.CartItemViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+
+    var products = ViewBag.Products as List<Shopping.Entity.Models.Product>;
+    var users = ViewBag.Users as List<Shopping.Entity.Models.User>;
+}
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .fa-trash-o {
+            font-size: 15px; /* Özel boyut */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-12 col-lg-8">
+                <div class="card">
+                    <div class="card-header fw-bold bg-dark p-2 text-white bg-opacity-75" style="font-size: 13pt !important;">
+                        <i class="bi bi-basket2"></i> Sale Page
+                    </div>
+                    <div class="card-body">
+                        <form method="post" action="/Cart/AddToCart">
+                            <div class="form-group mb-3">
+                                <label class="mb-1">Select Product:</label>
+                                <div class="input-group">
+                                    <select class="form-control" name="Id">
+                                        <option value>Select Product</option>
+                                        @foreach (var item in products)
+                                        {
+                                            <option value="@item.Id">@item.Name</option>
+                                        }
+                                    </select>
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                        <i class="bg-info bi-cart-plus"></i>
+                                        ADD
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        <form method="post" action="/Cart/AddSale">
+                            <div class="form-group mb-3">
+                                <select class="form-control" name="UserId">
+                                    @foreach (var item in users)
+                                    {
+                                        <option value="@item.Id">@item.FullName</option>
+                                    }
+                                </select>
+                                <label>Products</label>
+                                <table class="table table-bordered" id="block">
+                                    <thead>
+                                        <tr class=table-light>
+                                            <th class="align-middle text-center" style="width: 20%">Product</th>
+                                            <th class="align-middle text-center">Quantity</th>
+                                            <th class="align-middle text-center">Unit Price</th>
+                                            <th class="align-middle text-center">Total Amount</th>
+                                            <th class="align-middle text-center" style="width: 20% !important;">Delete</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model.CartLines)
+                                        {
+                                            <tr>
+                                                <td>@item.Product.Name</td>
+                                                <td>
+                                                    <input type="text" class="form-control quantity" name="Quantitiy" value="@item.Quantity" oninput="updateTotalPrice(this)">
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control unit-price" value="@item.Product.Price" oninput="updateTotalPrice(this)">
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control total-price" value="@(item.Product.Price * item.Quantity)">
+                                                </td>
+                                                <td>
+                                                    @using (Html.BeginForm("RemoveFromCart", "Cart"))
+                                                    {
+                                                        @Html.Hidden("Id", item.Product.Id)
+                                                        <button class="btn btn-danger">
+                                                            <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                                            Delete
+                                                        </button>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                    <fbody>
+                                        <tr>
+                                            <td colspan="4"></td>
+                                            <td>
+                                                <span name="TotalAmount" id="totalAmount">  Total Amount @Model.Total().ToString("c")</span>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="4"></td>
+                                            <td>
+                                                <button type="submit" class="btn btn-success fw-bold btn-sm">Complete the Sale</button>
+                                            </td>
+                                        </tr>
+                                    </fbody>
+                                </table>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        @*function updateTotalPrice(element) {
+            var row = element.closest('tr');
+            var quantity = parseFloat(row.querySelector('.quantity').value);
+            var unitPrice = parseFloat(row.querySelector('.unit-price').value);
+            var totalPrice = row.querySelector('.total-price');
+            var totalAmountSpan = document.getElementById('totalAmount');
+
+            if (!isNaN(quantity) && !isNaN(unitPrice)) {
+                totalPrice.value = (quantity * unitPrice).toFixed(2);
+            }
+
+            updateTotalAmount();
+        }
+
+        function updateTotalAmount() {
+            var totalAmount = 0;
+            var totalPrices = document.querySelectorAll('.total-price');
+
+            totalPrices.forEach(function (price) {
+                totalAmount += parseFloat(price.value);
+            });
+
+            document.getElementById('totalAmount').innerText = 'Total Amount: ' + totalAmount.toFixed(2) + ' ₺';
+        }*@
+        document.addEventListener('DOMContentLoaded', function() {
+    function updateTotalPrice(element) {
+        var row = element.closest('tr');
+        var quantity = parseFloat(row.querySelector('.quantity').value);
+        var unitPrice = parseFloat(row.querySelector('.unit-price').value);
+        var totalPrice = row.querySelector('.total-price');
+
+        if (!isNaN(quantity) && !isNaN(unitPrice)) {
+            totalPrice.value = (quantity * unitPrice).toFixed(2);
+        }
+
+        updateTotalAmount();
+    }
+
+    function updateTotalAmount() {
+        var totalAmount = 0;
+        var totalPrices = document.querySelectorAll('.total-price');
+
+        totalPrices.forEach(function(price) {
+            totalAmount += parseFloat(price.value);
+        });
+
+        document.getElementById('totalAmount').innerText = 'Total Amount: ' + totalAmount.toFixed(2) + ' ₺';
+    }
+
+    // Initialize total amount on page load
+    updateTotalAmount();
+
+    // Attach updateTotalPrice function to each input field
+    var quantityInputs = document.querySelectorAll('.quantity');
+    var unitPriceInputs = document.querySelectorAll('.unit-price');
+    var totalPriceInputs = document.querySelectorAll('.total-price');
+
+    quantityInputs.forEach(function(input) {
+        input.addEventListener('input', function() {
+            updateTotalPrice(input);
+        });
+    });
+
+    unitPriceInputs.forEach(function(input) {
+        input.addEventListener('input', function() {
+            updateTotalPrice(input);
+        });
+    });
+
+    totalPriceInputs.forEach(function(input) {
+        input.addEventListener('input', function() {
+            updateTotalAmount();
+        });
+    });
+});
+    </script>
+</body>

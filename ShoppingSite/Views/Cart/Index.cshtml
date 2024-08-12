@@ -11,7 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         .fa-trash-o {
-            font-size: 15px; /* Özel boyut */
+            font-size: 15px; 
         }
     </style>
 </head>
@@ -44,12 +44,6 @@
                         </form>
                         <form method="post" action="/Cart/AddSale">
                             <div class="form-group mb-3">
-                                <select class="form-control" name="UserId">
-                                    @foreach (var item in users)
-                                    {
-                                        <option value="@item.Id">@item.FullName</option>
-                                    }
-                                </select>
                                 <label>Products</label>
                                 <table class="table table-bordered" id="block">
                                     <thead>
@@ -57,7 +51,7 @@
                                             <th class="align-middle text-center" style="width: 20%">Product</th>
                                             <th class="align-middle text-center">Quantity</th>
                                             <th class="align-middle text-center">Unit Price</th>
-                                            <th class="align-middle text-center">Total Amount</th>
+                                            <th class="align-middle text-center">Total Price</th>
                                             <th class="align-middle text-center" style="width: 20% !important;">Delete</th>
                                         </tr>
                                     </thead>
@@ -67,23 +61,20 @@
                                             <tr>
                                                 <td>@item.Product.Name</td>
                                                 <td>
-                                                    <input type="text" class="form-control quantity" name="Quantitiy" value="@item.Quantity" oninput="updateTotalPrice(this)">
+                                                    <input type="text" class="form-control quantity" name="Quantities[@item.Product.Id]" value="@item.Quantity" oninput="updateTotalPrice(this)">
                                                 </td>
                                                 <td>
-                                                    <input type="text" class="form-control unit-price" value="@item.Product.Price" oninput="updateTotalPrice(this)">
+                                                    <input type="text" class="form-control unit-price" name="Prices[@item.Product.Id]" value="@item.Product.Price" oninput="updateTotalPrice(this)">
                                                 </td>
                                                 <td>
                                                     <input type="text" class="form-control total-price" value="@(item.Product.Price * item.Quantity)">
                                                 </td>
+
                                                 <td>
-                                                    @using (Html.BeginForm("RemoveFromCart", "Cart"))
-                                                    {
-                                                        @Html.Hidden("Id", item.Product.Id)
-                                                        <button class="btn btn-danger">
-                                                            <i class="fa fa-trash-o" aria-hidden="true"></i>
-                                                            Delete
-                                                        </button>
-                                                    }
+                                                    <a href="@Url.Action("RemoveFromCart", "Cart", new { id = item.Product.Id })" class="btn btn-danger">
+                                                        <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                                        Delete
+                                                    </a>
                                                 </td>
                                             </tr>
                                         }
@@ -92,7 +83,7 @@
                                         <tr>
                                             <td colspan="4"></td>
                                             <td>
-                                                <span name="TotalAmount" id="totalAmount">  Total Amount @Model.Total().ToString("c")</span>
+                                                <span id="totalAmount">  Total Amount @Model.Total().ToString("c")</span>
                                             </td>
                                         </tr>
                                         <tr>
@@ -111,7 +102,102 @@
         </div>
     </div>
     <script>
-        @*function updateTotalPrice(element) {
+        document.addEventListener('DOMContentLoaded', function () {
+            function updateTotalPrice(element) {
+                var row = element.closest('tr');
+                var quantity = parseFloat(row.querySelector('.quantity').value);
+                var unitPrice = parseFloat(row.querySelector('.unit-price').value);
+                var totalPrice = row.querySelector('.total-price');
+
+                if (!isNaN(quantity) && !isNaN(unitPrice)) {
+                    totalPrice.value = (quantity * unitPrice).toFixed(2);
+                }
+
+                updateTotalAmount();
+            }
+
+            function updateTotalAmount() {
+                var totalAmount = 0;
+                var totalPrices = document.querySelectorAll('.total-price');
+
+                totalPrices.forEach(function (price) {
+                    totalAmount += parseFloat(price.value);
+                });
+
+
+                document.getElementById('totalAmount').innerText = 'Total Amount: ' + totalAmount.toFixed(2) + ' ₺';
+            }
+
+            // sayfa ilk yüklendiğinde TotalAmount ve Quantitiy giriş yap
+            updateTotalAmount();
+
+            // her bir değişim için güncelle
+            var quantityInputs = document.querySelectorAll('.quantity');
+            var unitPriceInputs = document.querySelectorAll('.unit-price');
+
+            quantityInputs.forEach(function (input) {
+                input.addEventListener('input', function () {
+                    updateTotalPrice(input);
+                });
+            });
+
+            unitPriceInputs.forEach(function (input) {
+                input.addEventListener('input', function () {
+                    updateTotalPrice(input);
+                });
+            });
+        });
+        /*document.addEventListener('DOMContentLoaded', function () {
+            function updateTotalPrice(element) {
+                var row = element.closest('tr');
+                var quantity = parseFloat(row.querySelector('.quantity').value);
+                var unitPrice = parseFloat(row.querySelector('.unit-price').value);
+                var totalPrice = row.querySelector('.total-price');
+
+                if (!isNaN(quantity) && !isNaN(unitPrice)) {
+                    totalPrice.value = (quantity * unitPrice).toFixed(2);
+                }
+
+                updateTotalAmount();
+            }
+
+            function updateTotalAmount() {
+                var totalAmount = 0;
+                var totalPrices = document.querySelectorAll('.total-price');
+
+                totalPrices.forEach(function (price) {
+                    totalAmount += parseFloat(price.value);
+                });
+
+                document.getElementById('totalAmount').innerText = 'Total Amount: ' + totalAmount.toFixed(2) + ' ₺';
+            }
+            // sayfa yüklendiği zaman toplam tutar başlat
+            updateTotalAmount();
+
+            // Her girişten sonra TotalAmount u updateleme
+            var quantityInputs = document.querySelectorAll('.quantity');
+            var unitPriceInputs = document.querySelectorAll('.unit-price');
+            var totalPriceInputs = document.querySelectorAll('.total-price');
+
+            quantityInputs.forEach(function (input) {
+                input.addEventListener('input', function () {
+                    updateTotalPrice(input);
+                });
+            });
+
+            unitPriceInputs.forEach(function (input) {
+                input.addEventListener('input', function () {
+                    updateTotalPrice(input);
+                });
+            });
+
+            totalPriceInputs.forEach(function (input) {
+                input.addEventListener('input', function () {
+                    updateTotalAmount();
+                });
+            });
+        });*/
+        @* function updateTotalPrice(element) {
             var row = element.closest('tr');
             var quantity = parseFloat(row.querySelector('.quantity').value);
             var unitPrice = parseFloat(row.querySelector('.unit-price').value);
@@ -135,56 +221,5 @@
 
             document.getElementById('totalAmount').innerText = 'Total Amount: ' + totalAmount.toFixed(2) + ' ₺';
         }*@
-        document.addEventListener('DOMContentLoaded', function() {
-    function updateTotalPrice(element) {
-        var row = element.closest('tr');
-        var quantity = parseFloat(row.querySelector('.quantity').value);
-        var unitPrice = parseFloat(row.querySelector('.unit-price').value);
-        var totalPrice = row.querySelector('.total-price');
-
-        if (!isNaN(quantity) && !isNaN(unitPrice)) {
-            totalPrice.value = (quantity * unitPrice).toFixed(2);
-        }
-
-        updateTotalAmount();
-    }
-
-    function updateTotalAmount() {
-        var totalAmount = 0;
-        var totalPrices = document.querySelectorAll('.total-price');
-
-        totalPrices.forEach(function(price) {
-            totalAmount += parseFloat(price.value);
-        });
-
-        document.getElementById('totalAmount').innerText = 'Total Amount: ' + totalAmount.toFixed(2) + ' ₺';
-    }
-
-    // Initialize total amount on page load
-    updateTotalAmount();
-
-    // Attach updateTotalPrice function to each input field
-    var quantityInputs = document.querySelectorAll('.quantity');
-    var unitPriceInputs = document.querySelectorAll('.unit-price');
-    var totalPriceInputs = document.querySelectorAll('.total-price');
-
-    quantityInputs.forEach(function(input) {
-        input.addEventListener('input', function() {
-            updateTotalPrice(input);
-        });
-    });
-
-    unitPriceInputs.forEach(function(input) {
-        input.addEventListener('input', function() {
-            updateTotalPrice(input);
-        });
-    });
-
-    totalPriceInputs.forEach(function(input) {
-        input.addEventListener('input', function() {
-            updateTotalAmount();
-        });
-    });
-});
     </script>
 </body>

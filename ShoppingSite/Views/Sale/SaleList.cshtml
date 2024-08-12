@@ -1,0 +1,25 @@
+﻿@model List<Shopping.Entity.Models.Sale>
+@{
+    ViewBag.Title = "SaleList";
+}
+<h2>Sale List</h2>
+<br />
+<table class="table table-bordered">
+    <tr>
+        <th>ID</th>
+        <th>USERNAME</th>
+        <th>DATE</th>
+        <th>TOTAL AMOUNT</th>
+        <th>GO TO DETAILS</th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Id</td>
+            <td>@item.User.Username</td>
+            <td>@item.Date</td>
+            <td>@item.TotalAmount</td>
+            <td><a href="/Sale/Details/@item.Id" class="btn btn-primary">Go To Details</a></td>
+        </tr>
+    }
+</table>

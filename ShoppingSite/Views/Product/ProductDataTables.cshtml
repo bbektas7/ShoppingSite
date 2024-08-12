@@ -1,8 +1,9 @@
 ﻿@model List<Shopping.Entity.Models.Product>
 @{
-    ViewBag.Title = "ProductList";
+    ViewBag.Title = "ProductDataTables";
     Layout = "~/Views/Shared/_LayoutPage.cshtml";
 }
+
 <head>
     <title>Product List</title>
     <!-- DataTables CSS -->
@@ -31,26 +32,28 @@
                 <th>Product Name</th>
                 <th>Barcode</th>
                 <th>Category</th>
+                <th>Price</th>
                 <th>Stock</th>
             </tr>
         </thead>
         <tbody>
-            @foreach(var x in Model) 
+            @foreach (var x in Model)
             {
                 <tr>
                     <td>@x.Name</td>
                     <td>@x.Barcode</td>
                     <td>@x.Category.Name</td>
                     <td>@x.Price</td>
+                    <td>@x.Stock</td>
                 </tr>
             }
         </tbody>
         <tfoot>
             <tr>
-                <th>Name</th>
-                <th>Position</th>
-                <th>Office</th>
-                <th>Age</th>
+                <th>Product Name</th>
+                <th>Barcode</th>
+                <th>Category</th>
+                <th>Stock</th>
             </tr>
         </tfoot>
     </table>
@@ -70,3 +73,4 @@
         });
     </script>
 </body>
+

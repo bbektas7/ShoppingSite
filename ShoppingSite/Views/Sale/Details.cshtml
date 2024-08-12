@@ -1,0 +1,48 @@
+﻿@model List< Shopping.Entity.Models.SaleDetail>
+@{
+    ViewBag.Title = "Details";
+}
+
+<style>
+    .delete-sale-button {
+        margin-top: 20px;
+        text-align: right;
+    }
+</style>
+<h2>Sale Details</h2>
+<br />
+<table class="table table-bordered">
+    <tr>
+        <th>ID</th>
+        <th>SALE ID</th>
+        <th>PRODUCT NAME</th>
+        <th>QUANTITY</th>
+        <th>TOTAL PRICE</th>
+        <th>DELETE</th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Id</td>
+            <td>@item.SaleId</td>
+            <td>@item.Product.Name</td>
+            <td>@item.Quantity</td>
+            <td>@item.Price</td>
+            <td><a href="/Sale/DeleteDetail/@item.Id" class="btn btn-danger">Delete</a></td>
+        </tr>
+    }
+</table>
+<div class="delete-sale-button">
+    @{
+        var firstItem = Model.FirstOrDefault();
+        if (firstItem != null)
+        {
+            var saleId = firstItem.SaleId;
+            <a href="/Sale/DeleteSale/@saleId" class="btn btn-danger">Delete Sale</a>
+        }
+        else
+        {
+            <p>No sale details available.</p>
+        }
+    }
+</div>

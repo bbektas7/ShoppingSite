@@ -1,9 +1,6 @@
-﻿using Shopping.Entity.Models;
-using ShoppingSite.Models.ViewModels;
-using Shpping.DataAccess.Context;
+﻿using Shpping.DataAccess.Context;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -12,54 +9,42 @@ namespace ShoppingSite.Controllers
 {
     public class SaleController : Controller
     {
-        DataContext db = new DataContext();
-        
         // GET: Sale
+        DataContext db = new DataContext();
         public ActionResult Index()
         {
-            //Ürünleri Getir
-
-            var urunler = db.Products.ToList();
-
-            ViewBag.Products = urunler;
-
             return View();
         }
-
-        [HttpGet]
-        public ActionResult AddToCart()
+        public ActionResult SaleList()
         {
-            var products = db.Products.ToList();
-            var users = db.Users.ToList();
-
-            ViewBag.Products = products;
-            ViewBag.Users = users;
-
-            return View();
+            var sales = db.Sales.ToList();
+            return View(sales);
         }
-        [HttpPost]
-        public ActionResult AddToCart(Sale s)
-        { 
-            
-            db.Sales.Add(s);
+        public ActionResult Details(int? Id)
+        {
+            var SaleDetail = db.SaleDetails.Where(s => s.SaleId == Id).ToList();
+            return View(SaleDetail);
+        }
+        public ActionResult DeleteDetail(int Id)
+        {
+            var product = db.SaleDetails.FirstOrDefault(s => s.Id == Id);
+            product.Product.Stock += product.Quantity;
+            product.Sale.TotalAmount -= product.Price;
+            db.SaleDetails.Remove(product);
             db.SaveChanges();
-            return RedirectToAction("AddToCart");
+            return RedirectToAction("Details",new {Id = product.SaleId });
         }
-           
-        [HttpGet]
-        public ActionResult GetProductPrice(int productId)
-        
+        public ActionResult DeleteSale(int Id)
         {
-            var product = db.Products.Find(productId);
-
-            if (product != null)
+            var sale = db.Sales.FirstOrDefault(s => s.Id == Id);
+            var products = db.SaleDetails.Where(s => s.SaleId == Id).ToList();
+            foreach (var product in products)
             {
-                return Json( new { unitprice = product.Price }, JsonRequestBehavior.AllowGet);
+                product.Product.Stock += product.Quantity;
             }
-            else
-            {
-                return Json(new {unitprice = 0}, JsonRequestBehavior.AllowGet);
-            }
+            db.Sales.Remove(sale);
+            db.SaveChanges();
+            return RedirectToAction("SaleList");
         }
     }
 }

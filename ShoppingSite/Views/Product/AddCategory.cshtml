@@ -12,7 +12,6 @@
         buttonText = "Update";
     }
 }
-}
 
 <h2>Add Category</h2>
 <br />
@@ -23,13 +22,17 @@
                 <i class="fa-solid fa-plus"></i> @title
             </div>
             <div class="card-body">
-                @using (Html.BeginForm("AddCategory", "Product", FormMethod.Post))
-                {
-                    @Html.LabelFor(x => x.Name, "Category Name")
-                    @Html.TextBoxFor(x => x.Name, new { @class = "form-control mb-3" })
-
+                <form method="post" action="/Product/AddCategory">
+                    @if (Model != null)
+                    {
+                        <input type="hidden" class="form-control" name="Id" value="@Model.Id">
+                    }
+                    <div class="mb-3">
+                        <label class="form-label">Category Name</label>
+                        <input type="text" class="form-control form-control-sm" name="Name" value="@(Model != null ? Model.Name : "")">
+                    </div>
                     <button type="submit" class="btn btn-primary">@buttonText</button>
-                }
+                </form>
             </div>
         </div>
     </div>

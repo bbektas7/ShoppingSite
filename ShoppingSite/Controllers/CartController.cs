@@ -9,7 +9,7 @@ using Shopping.Entity.Models;
 
 namespace ShoppingSite.Controllers
 {
-    public class CartController : Controller
+    public class CartController : BaseController
     {
         // GET: Cart
         DataContext db = new DataContext();
@@ -25,7 +25,7 @@ namespace ShoppingSite.Controllers
         public ActionResult AddToCart(int Id)
         {
             var product = db.Products.FirstOrDefault(x => x.Id == Id);
-            if (product != null) 
+            if (product != null)
             {
                 GetCart().AddProduct(product, 1);
             }
@@ -57,19 +57,40 @@ namespace ShoppingSite.Controllers
             return RedirectToAction("Index");
         }
         [HttpPost]
-        public ActionResult AddSale(Sale s)
+        public ActionResult AddSale(Sale s, Dictionary<int, int> Quantities, Dictionary<int, decimal> Prices)
         {
             s.Date = DateTime.Now;
-            s.TotalAmount = GetCart().Total();
+            var user = Session["User"] as User;
+            s.UserId = user.Id;
             db.Sales.Add(s);
+
             foreach (var item in GetCart().CartLines)
             {
-                var product = db.Products.SingleOrDefault(x => x.Id == item.Product.Id);
-                if (product != null)
+                if (Quantities.ContainsKey(item.Product.Id) && Prices.ContainsKey(item.Product.Id))
                 {
-                    product.Stock -= item.Quantity;
+                    int updatedQuantity = Quantities[item.Product.Id];
+                    decimal updatedPrice = Prices[item.Product.Id];
+
+                    var product = db.Products.SingleOrDefault(x => x.Id == item.Product.Id);
+                    if (product != null)
+                    {
+                        GetCart().UpdateQuantity(product, updatedQuantity);
+                        product.Stock -= updatedQuantity;
+                        s.TotalAmount += updatedPrice * updatedQuantity;
+
+                        var saleDetail = new SaleDetail
+                        {
+                            SaleId = s.Id,
+                            ProductId = item.Product.Id,
+                            Quantity = updatedQuantity,
+                            Price = updatedPrice * updatedQuantity
+                        };
+
+                        db.SaleDetails.Add(saleDetail);
+                    }
                 }
             }
+
             db.SaveChanges();
             GetCart().Clear();
             return View();

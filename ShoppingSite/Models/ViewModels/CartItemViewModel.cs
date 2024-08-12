@@ -27,7 +27,11 @@ namespace ShoppingSite.Models.ViewModels
                 line.Quantity += quantity;
             }
         }
-
+        public void UpdateQuantity(Product product, int quantity) 
+        { 
+            var line = _cartLines.FirstOrDefault(y => y.Product.Id == product.Id);
+            line.Quantity = quantity;
+        }
         public void DeleteProduct(Product product)
         {
             _cartLines.RemoveAll(x => x.Product.Id == product.Id);

@@ -26,14 +26,44 @@
     {
         foreach (var x in Model)
         {
-            <tr>
-                <td>@x.Id</td>
-                <td>@x.FullName</td>
-                <td>@x.Username</td>
-                <td>@(x.IsAdmin ? "Yes" : "No")</td>
-                <td><a href="/User/Delete/@x.Id" class="btn btn-danger">Delete</a></td>
-                <td><a href="/User/addProduct/?Id=@x.Id" class="btn btn-warning">Update</a></td>
-            </tr>
+            if (x.IsAdmin)
+            {
+                <tr>
+                    <td>@x.Id</td>
+                    <td>@x.FullName</td>
+                    <td>@x.Username</td>
+                    <td>Yes</td>
+                    <td></td>
+                    <td><a href="/User/add/@x.Id" class="btn btn-warning">Update</a></td>
+                </tr>
+            }
+            else
+            {
+                if (x.IsDeleted)
+                {
+                    <tr>
+                        <td>@x.Id</td>
+                        <td>@x.FullName</td>
+                        <td>@x.Username</td>
+                        <td>No</td>
+                        <td colspan="2">
+                            <a href="/User/ActiveAgain/@x.Id" class="btn btn-success">Active Again</a>
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    <tr>
+                        <td>@x.Id</td>
+                        <td>@x.FullName</td>
+                        <td>@x.Username</td>
+                        <td>No</td>
+                        <td><a href="/User/Delete/@x.Id" class="btn btn-danger">Delete</a></td>
+                        <td><a href="/User/add/@x.Id" class="btn btn-warning">Update</a></td>
+                    </tr>
+                }
+            }
+
         }
     }
 </table>

@@ -1,4 +1,5 @@
 ﻿using Shopping.Entity.Models;
+using ShoppingSite.Authorize;
 using Shpping.DataAccess.Context;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using System.Web.Mvc;
 
 namespace ShoppingSite.Controllers
 {
+    [AuthAdmin]
     public class ProductController : Controller
     {
         // GET: Product
@@ -25,17 +27,18 @@ namespace ShoppingSite.Controllers
         [HttpGet]
         public ActionResult AddCategory(int? Id)
         {
-            if(Id == null)
-            { 
+            if (Id == null)
+            {
                 return View();
             }
             else
             {
                 var category = db.Categories.Find(Id);
+
                 return View(category);
             }
         }
-        [HttpPost]
+            [HttpPost]
         public ActionResult AddCategory(Category c)
         {
             var dbCategory = db.Categories.FirstOrDefault(x=> x.Id == c.Id);
@@ -43,7 +46,7 @@ namespace ShoppingSite.Controllers
             { 
                 db.Categories.Add(c);
                 db.SaveChanges();
-                return RedirectToAction("AddCategory");
+                return RedirectToAction("CategoryList");
             }
             else
             {
@@ -81,7 +84,7 @@ namespace ShoppingSite.Controllers
             { 
                 db.Products.Add(p);
                 db.SaveChanges();
-                return RedirectToAction("AddProduct");
+                return RedirectToAction("ProductList");
             }
             else
             {
@@ -93,7 +96,7 @@ namespace ShoppingSite.Controllers
                 db.SaveChanges();
                 return RedirectToAction("ProductList");
             }
-    }
+        }
         public ActionResult ProductList()
         {
             var products = db.Products.ToList();
@@ -106,6 +109,10 @@ namespace ShoppingSite.Controllers
             db.SaveChanges();
             return RedirectToAction("ProductList");
         }
-
+        public ActionResult ProductDataTables()
+        {
+            var products = db.Products.ToList();
+            return View(products);
+        }
     }
 }

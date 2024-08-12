@@ -1,0 +1,103 @@
+﻿@model ShoppingSite.Models.ViewModels.ReportViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_LayoutPage.cshtml";
+
+    var saleDetails = ViewBag.SaleDetail as List<Shopping.Entity.Models.SaleDetail>;
+    var report = ViewBag.Report;
+
+    var totalQuantity = 0;
+    decimal totalPrice = 0;
+
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sales Report</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h2>Sales Report</h2>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <form method="get" action="@Url.Action("Index", "Report")">
+                    <div class="input-group">
+                        <input type="text" id="startDatePicker" name="start" class="form-control" placeholder="Select Start Date">
+                        <span class="input-group-text">to</span>
+                        <input type="text" id="endDatePicker" name="end" class="form-control" placeholder="Select End Date">
+                        <button type="submit" class="btn btn-primary">Filter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <table id="salesReportTable" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Quantity</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.ReportLines)
+                {
+                    <tr>
+                        <td>@item.Product.Name</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.TotalPrice</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <br />
+            @foreach (var item in Model.ReportLines)
+            {
+                totalQuantity += item.Quantity;
+                totalPrice += item.TotalPrice;
+            }
+        
+        <p>@totalQuantity Adet Ürün Satıldı. Toplam Satış Geliri @totalPrice</p>
+    </div>
+    <script>
+        $(document).ready(function () {
+
+            $('#startDatePicker, #endDatePicker').datepicker({
+                dateFormat: 'yy-mm-dd',
+                autoclose: true,
+                onSelect: function (selectedDate) {
+                    // Automatically set the date range
+                    if (this.id == 'startDatePicker') {
+                        var dateMin = $('#startDatePicker').datepicker("getDate");
+                        var rMin = new Date(dateMin.getFullYear(), dateMin.getMonth(), dateMin.getDate() + 1);
+                        $('#endDatePicker').datepicker("option", "minDate", rMin);
+                    }
+                }
+            });
+
+            // Initialize datepicker
+            /*$('#startDatePicker, #endDatePicker').datepicker({
+                dateFormat: 'yy-mm-dd',
+                autoclose: true
+            });*/
+
+            // Initialize DataTable
+            $('#salesReportTable').DataTable({
+                "paging": true,
+                "searching": true,
+                "ordering": true,
+                "info": true
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
